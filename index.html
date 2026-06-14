@@ -41,12 +41,7 @@
       z-index: 10;
     }
 
-    header h1 {
-      font-size: 1.25rem;
-      font-weight: 700;
-      letter-spacing: -0.3px;
-    }
-
+    header h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.3px; }
     header h1 span { color: var(--primary); }
 
     #btn-add {
@@ -68,36 +63,38 @@
 
     /* ── Main ── */
     main {
-      max-width: 960px;
+      max-width: 1020px;
       margin: 0 auto;
       padding: 32px 24px;
     }
 
-    /* ── Stats row ── */
+    /* ── Stats ── */
     .stats {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 16px;
-      margin-bottom: 32px;
+      grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+      gap: 14px;
+      margin-bottom: 28px;
     }
 
     .stat-card {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 18px 20px;
+      padding: 16px 18px;
     }
 
-    .stat-card .label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
-    .stat-card .value { font-size: 1.9rem; font-weight: 700; margin-top: 4px; }
-    .stat-card.warn .value { color: var(--warning); }
-    .stat-card.blue .value { color: var(--primary); }
+    .stat-card .label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-card .value { font-size: 1.75rem; font-weight: 700; margin-top: 4px; }
+    .stat-card.warn   .value { color: var(--warning); }
+    .stat-card.blue   .value { color: var(--primary); }
+    .stat-card.danger .value { color: var(--danger); }
+    .stat-card.green  .value { color: var(--success); }
 
     /* ── Filters ── */
     .filters {
       display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
+      gap: 8px;
+      margin-bottom: 18px;
       flex-wrap: wrap;
       align-items: center;
     }
@@ -106,8 +103,8 @@
       border: 1px solid var(--border);
       background: var(--card);
       border-radius: 20px;
-      padding: 6px 16px;
-      font-size: 0.83rem;
+      padding: 6px 14px;
+      font-size: 0.82rem;
       cursor: pointer;
       color: var(--muted);
       transition: all 0.12s;
@@ -131,7 +128,7 @@
       font-size: 0.85rem;
       outline: none;
       background: var(--card);
-      width: 200px;
+      width: 210px;
     }
 
     .search-wrap::before {
@@ -144,16 +141,16 @@
     }
 
     /* ── Orders list ── */
-    #orders-list { display: flex; flex-direction: column; gap: 14px; }
+    #orders-list { display: flex; flex-direction: column; gap: 12px; }
 
     .order-card {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 18px 20px;
+      padding: 15px 18px;
       display: flex;
-      align-items: center;
-      gap: 18px;
+      flex-direction: column;
+      gap: 10px;
       transition: box-shadow 0.15s;
       position: relative;
       overflow: hidden;
@@ -161,7 +158,6 @@
 
     .order-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.07); }
 
-    /* left accent stripe */
     .order-card::before {
       content: "";
       position: absolute;
@@ -176,14 +172,21 @@
     .order-card.returned::before { background: var(--success); }
     .order-card.returned { opacity: 0.6; }
 
+    /* main row inside card */
+    .card-main-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
     .type-badge {
-      width: 44px;
-      height: 44px;
+      width: 42px;
+      height: 42px;
       border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.3rem;
+      font-size: 1.25rem;
       flex-shrink: 0;
     }
 
@@ -200,13 +203,13 @@
       text-overflow: ellipsis;
     }
 
-    .order-info .address {
-      font-size: 0.82rem;
+    .order-info .sub {
+      font-size: 0.81rem;
       color: var(--muted);
       margin-top: 3px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
     .order-meta {
@@ -214,10 +217,7 @@
       flex-shrink: 0;
     }
 
-    .order-meta .date {
-      font-size: 0.85rem;
-      font-weight: 600;
-    }
+    .order-meta .date { font-size: 0.85rem; font-weight: 600; }
 
     .order-meta .days-tag {
       display: inline-block;
@@ -253,18 +253,54 @@
       transition: background 0.12s;
     }
 
-    .action-btn:hover { background: var(--bg); }
+    .action-btn:hover        { background: var(--bg); }
     .action-btn.delete:hover { background: #fef2f2; border-color: #fca5a5; }
 
-    /* ── Empty state ── */
-    .empty {
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--muted);
+    /* WC detail chips row */
+    .card-wc-details {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      padding-left: 58px;
     }
 
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 0.76rem;
+      padding: 3px 9px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: var(--bg);
+      white-space: nowrap;
+    }
+
+    .chip.clean-ok      { background: #f0fdf4; border-color: #bbf7d0; color: #15803d; }
+    .chip.clean-soon    { background: #fffbeb; border-color: #fde68a; color: #92400e; }
+    .chip.clean-overdue { background: #fef2f2; border-color: #fca5a5; color: #991b1b; }
+    .chip.debt          { background: #fff7ed; border-color: #fed7aa; color: #9a3412; }
+    .chip.long-term     { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; }
+    .chip.bank          { background: #f5f3ff; border-color: #ddd6fe; color: #5b21b6; }
+
+    /* ── Empty state ── */
+    .empty { text-align: center; padding: 60px 20px; color: var(--muted); }
     .empty .icon { font-size: 3rem; margin-bottom: 12px; }
     .empty p { font-size: 0.9rem; }
+
+    /* ── Alert banners ── */
+    .banner {
+      display: none;
+      border-radius: var(--radius);
+      padding: 13px 16px;
+      margin-bottom: 10px;
+      font-size: 0.875rem;
+    }
+
+    .banner.show  { display: block; }
+    .banner.due   { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+    .banner.clean { background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; }
 
     /* ── Modal ── */
     .overlay {
@@ -273,9 +309,10 @@
       inset: 0;
       background: rgba(0,0,0,0.45);
       z-index: 100;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
-      padding: 16px;
+      padding: 20px 16px;
+      overflow-y: auto;
     }
 
     .overlay.open { display: flex; }
@@ -284,10 +321,11 @@
       background: var(--card);
       border-radius: var(--radius);
       width: 100%;
-      max-width: 480px;
+      max-width: 520px;
       padding: 28px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.2);
       animation: pop 0.18s ease;
+      margin: auto;
     }
 
     @keyframes pop {
@@ -295,10 +333,18 @@
       to   { transform: scale(1);    opacity: 1; }
     }
 
-    .modal h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 22px; }
+    .modal h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; }
 
-    .field { margin-bottom: 18px; }
-    .field label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 6px; }
+    .field { margin-bottom: 15px; }
+    .field label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 5px;
+    }
 
     .field input,
     .field select {
@@ -314,7 +360,19 @@
     }
 
     .field input:focus,
-    .field select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59,111,240,0.1); }
+    .field select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59,111,240,0.1);
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .field-row .field { margin-bottom: 0; }
 
     /* type selector cards */
     .type-selector {
@@ -334,7 +392,6 @@
     }
 
     .type-option input { display: none; }
-
     .type-option .icon { font-size: 1.8rem; }
     .type-option .name { font-size: 0.85rem; font-weight: 600; margin-top: 6px; color: var(--text); }
 
@@ -343,10 +400,28 @@
       background: #eff6ff;
     }
 
+    /* WC-specific section in modal */
+    #wc-section {
+      border-top: 1px solid var(--border);
+      margin-top: 4px;
+      padding-top: 16px;
+    }
+
+    #wc-section.hidden { display: none; }
+
+    .section-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 14px;
+    }
+
     .modal-footer {
       display: flex;
       gap: 10px;
-      margin-top: 24px;
+      margin-top: 22px;
     }
 
     .btn-cancel {
@@ -376,24 +451,12 @@
 
     .btn-save:hover { background: var(--primary-dark); }
 
-    /* alert banner */
-    #alert-banner {
-      display: none;
-      background: #fffbeb;
-      border: 1px solid #fde68a;
-      border-radius: var(--radius);
-      padding: 14px 18px;
-      margin-bottom: 20px;
-      font-size: 0.875rem;
-      color: #92400e;
-    }
-
-    #alert-banner.show { display: block; }
-
-    @media (max-width: 520px) {
+    @media (max-width: 540px) {
       header { padding: 14px 16px; }
-      main { padding: 20px 14px; }
+      main { padding: 20px 12px; }
       .order-meta { display: none; }
+      .card-wc-details { padding-left: 0; }
+      .field-row { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -408,8 +471,9 @@
 <!-- ── Main ── -->
 <main>
 
-  <!-- Alert for due-soon orders -->
-  <div id="alert-banner"></div>
+  <!-- Banners -->
+  <div id="banner-due"   class="banner due"></div>
+  <div id="banner-clean" class="banner clean"></div>
 
   <!-- Stats -->
   <div class="stats">
@@ -429,6 +493,14 @@
       <div class="label">Tenda Jashtë</div>
       <div class="value" id="stat-tent">0</div>
     </div>
+    <div class="stat-card danger">
+      <div class="label">Pastrim Sot</div>
+      <div class="value" id="stat-clean">0</div>
+    </div>
+    <div class="stat-card warn">
+      <div class="label">Borxhi Total</div>
+      <div class="value" id="stat-debt">0€</div>
+    </div>
   </div>
 
   <!-- Filters -->
@@ -438,8 +510,9 @@
     <button class="filter-btn" data-filter="due-soon">Afër Afatit</button>
     <button class="filter-btn" data-filter="overdue">Vonuara</button>
     <button class="filter-btn" data-filter="returned">Kthyera</button>
+    <button class="filter-btn" data-filter="cleaning">🧹 Pastrim Sot</button>
     <div class="search-wrap">
-      <input id="search" type="text" placeholder="Kërko klient ose adresë…" />
+      <input id="search" type="text" placeholder="Kërko klient, adresë, telefon…" />
     </div>
   </div>
 
@@ -448,19 +521,25 @@
 
 </main>
 
-<!-- ── Add/Edit Modal ── -->
+<!-- ── Add / Edit Modal ── -->
 <div class="overlay" id="overlay">
   <div class="modal">
     <h2 id="modal-title">Porosi e Re</h2>
 
+    <!-- Common fields -->
     <div class="field">
-      <label>Emri i Klientit</label>
+      <label>Emri dhe Mbiemri</label>
       <input id="f-client" type="text" placeholder="p.sh. Agim Berisha" />
     </div>
 
     <div class="field">
-      <label>Adresa e Shërbimit</label>
-      <input id="f-address" type="text" placeholder="p.sh. Rruga Dëshmorët, Tiranë" />
+      <label>Lokacioni</label>
+      <input id="f-address" type="text" placeholder="p.sh. Rruga Dëshmorët, Prishtinë" />
+    </div>
+
+    <div class="field">
+      <label>Numri i Telefonit</label>
+      <input id="f-phone" type="tel" placeholder="p.sh. +383 44 123 456" />
     </div>
 
     <div class="field">
@@ -479,14 +558,55 @@
       </div>
     </div>
 
+    <div class="field-row">
+      <div class="field">
+        <label>Data e Dërgimit</label>
+        <input id="f-delivery" type="date" />
+      </div>
+      <div class="field">
+        <label>Data e Kthimit</label>
+        <input id="f-date" type="date" />
+      </div>
+    </div>
+
+    <!-- Payment fields — common for all types -->
+    <div class="field-row">
+      <div class="field">
+        <label>Pagesa Mujore (€)</label>
+        <input id="f-monthly" type="number" min="0" step="1" placeholder="0" />
+      </div>
+      <div class="field">
+        <label>Mënyra e Pagesës</label>
+        <select id="f-payment">
+          <option value="cash">💵 Cash</option>
+          <option value="bank">🏦 Bankë</option>
+        </select>
+      </div>
+    </div>
+
     <div class="field">
-      <label>Data e Kthimit</label>
-      <input id="f-date" type="date" />
+      <label>Borxhi Aktual (€)</label>
+      <input id="f-debt" type="number" min="0" step="1" placeholder="0" />
+    </div>
+
+    <!-- WC-only section -->
+    <div id="wc-section">
+      <div class="section-label">🚽 Detaje Tualeti</div>
+
+      <div class="field">
+        <label>Pastrimi i Tualetit</label>
+        <select id="f-cleaning">
+          <option value="">— Pa reminder —</option>
+          <option value="1w">Çdo 1 javë</option>
+          <option value="2w">Çdo 2 javë</option>
+          <option value="1m">Çdo 1 muaj</option>
+        </select>
+      </div>
     </div>
 
     <div class="modal-footer">
       <button class="btn-cancel" id="btn-cancel">Anulo</button>
-      <button class="btn-save" id="btn-save">Ruaj Porosinë</button>
+      <button class="btn-save"   id="btn-save">Ruaj Porosinë</button>
     </div>
   </div>
 </div>
@@ -509,9 +629,16 @@
   }
 
   function daysUntil(dateStr) {
+    if (!dateStr) return null;
     const today = new Date(); today.setHours(0,0,0,0);
     const target = new Date(dateStr + 'T00:00:00');
     return Math.round((target - today) / 86400000);
+  }
+
+  function formatDate(dateStr) {
+    if (!dateStr) return '';
+    const [y, m, d] = dateStr.split('-');
+    return `${d}/${m}/${y}`;
   }
 
   function statusOf(order) {
@@ -522,12 +649,7 @@
     return 'active';
   }
 
-  function formatDate(dateStr) {
-    const [y, m, d] = dateStr.split('-');
-    return `${d}/${m}/${y}`;
-  }
-
-  function daysLabel(order) {
+  function returnLabel(order) {
     if (order.returned) return { text: 'Kthyer', cls: 'returned' };
     const d = daysUntil(order.returnDate);
     if (d < 0)  return { text: `${Math.abs(d)}d vonuar`, cls: 'overdue' };
@@ -536,52 +658,116 @@
     return { text: `${d} ditë mbetur`, cls: 'ok' };
   }
 
-  // ── Render ───────────────────────────────────────────────────────────────
+  // ── Cleaning logic ────────────────────────────────────────────────────────
+  const FREQ_DAYS = { '1w': 7, '2w': 14, '1m': 30 };
+
+  function nextCleaningDate(order) {
+    if (order.type !== 'WC' || !order.cleaningFreq || !order.deliveryDate) return null;
+    const freq = FREQ_DAYS[order.cleaningFreq];
+    if (!freq) return null;
+
+    const delivery = new Date(order.deliveryDate + 'T00:00:00');
+    const today    = new Date(); today.setHours(0,0,0,0);
+    const daysSince = Math.floor((today - delivery) / 86400000);
+
+    const cycles = daysSince < 0 ? 0 : Math.floor(daysSince / freq);
+    const next = new Date(delivery);
+    next.setDate(next.getDate() + (cycles + 1) * freq);
+    return next.toISOString().slice(0, 10);
+  }
+
+  function cleaningChip(order) {
+    const next = nextCleaningDate(order);
+    if (!next) return null;
+    const d = daysUntil(next);
+    if (d < 0)  return { text: `🧹 Pastrim ${Math.abs(d)}d vonuar`, cls: 'clean-overdue' };
+    if (d === 0) return { text: '🧹 Pastrim Sot!',  cls: 'clean-soon' };
+    if (d === 1) return { text: '🧹 Pastrim Nesër', cls: 'clean-soon' };
+    return { text: `🧹 Pastrim ${d}d`, cls: 'clean-ok' };
+  }
+
+  function needsCleaningNow(order) {
+    if (order.returned) return false;
+    const next = nextCleaningDate(order);
+    return !!next && daysUntil(next) <= 0;
+  }
+
+  // ── Duration ──────────────────────────────────────────────────────────────
+  function durationChip(order) {
+    if (!order.deliveryDate || !order.returnDate) return null;
+    const days = Math.round(
+      (new Date(order.returnDate   + 'T00:00:00') -
+       new Date(order.deliveryDate + 'T00:00:00')) / 86400000
+    );
+    if (days <= 0) return null;
+    if (days >= 30) {
+      const months = Math.round(days / 30);
+      return months === 1 ? '1 muaj+' : `${months} muaj+`;
+    }
+    return null; // short-term — no badge needed
+  }
+
+  // ── Render ────────────────────────────────────────────────────────────────
   let currentFilter = 'all';
   let currentSearch = '';
 
   function render() {
     let orders = loadOrders();
 
-    // sort: overdue first, then by date
+    // sort: overdue first, then by return date, returned last
     orders.sort((a, b) => {
       if (a.returned && !b.returned) return 1;
       if (!a.returned && b.returned) return -1;
-      return a.returnDate.localeCompare(b.returnDate);
+      return (a.returnDate || '').localeCompare(b.returnDate || '');
     });
 
-    // stats
     const active = orders.filter(o => !o.returned);
+    const cleaningToday = active.filter(needsCleaningNow);
+    const totalDebt = active.reduce((s, o) => s + (Number(o.currentDebt) || 0), 0);
+
+    // stats
     document.getElementById('stat-active').textContent = active.length;
     document.getElementById('stat-due').textContent    = active.filter(o => daysUntil(o.returnDate) === 1).length;
     document.getElementById('stat-wc').textContent     = active.filter(o => o.type === 'WC').length;
     document.getElementById('stat-tent').textContent   = active.filter(o => o.type === 'Tent').length;
+    document.getElementById('stat-clean').textContent  = cleaningToday.length;
+    document.getElementById('stat-debt').textContent   = totalDebt ? `${totalDebt}€` : '0€';
 
-    // alert banner
-    const banner = document.getElementById('alert-banner');
+    // banners
+    const bannerDue = document.getElementById('banner-due');
     const dueTomorrow = active.filter(o => daysUntil(o.returnDate) === 1);
     if (dueTomorrow.length) {
-      banner.className = 'show';
-      banner.innerHTML = `⚠️ <strong>${dueTomorrow.length} porosi me afat nesër:</strong> ` +
-        dueTomorrow.map(o => `<strong>${o.client}</strong> (${o.type})`).join(', ');
+      bannerDue.className = 'banner due show';
+      bannerDue.innerHTML = `⚠️ <strong>${dueTomorrow.length} porosi me afat nesër:</strong> ` +
+        dueTomorrow.map(o => `<strong>${escHtml(o.client)}</strong> (${o.type})`).join(', ');
     } else {
-      banner.className = '';
+      bannerDue.className = 'banner due';
+    }
+
+    const bannerClean = document.getElementById('banner-clean');
+    if (cleaningToday.length) {
+      bannerClean.className = 'banner clean show';
+      bannerClean.innerHTML = `🧹 <strong>${cleaningToday.length} tualet me pastrim sot/vonuar:</strong> ` +
+        cleaningToday.map(o => `<strong>${escHtml(o.client)}</strong>`).join(', ');
+    } else {
+      bannerClean.className = 'banner clean';
     }
 
     // filter
     const filtered = orders.filter(o => {
       const s = statusOf(o);
-      const matchFilter =
-        currentFilter === 'all'       ? true :
-        currentFilter === 'active'    ? (s === 'active') :
-        currentFilter === 'due-soon'  ? (s === 'due-soon') :
-        currentFilter === 'overdue'   ? (s === 'overdue') :
-        currentFilter === 'returned'  ? (s === 'returned') : true;
+      let matchFilter = true;
+      if      (currentFilter === 'active')   matchFilter = s === 'active';
+      else if (currentFilter === 'due-soon') matchFilter = s === 'due-soon';
+      else if (currentFilter === 'overdue')  matchFilter = s === 'overdue';
+      else if (currentFilter === 'returned') matchFilter = s === 'returned';
+      else if (currentFilter === 'cleaning') matchFilter = needsCleaningNow(o);
 
       const q = currentSearch.toLowerCase();
       const matchSearch = !q ||
-        o.client.toLowerCase().includes(q) ||
-        o.address.toLowerCase().includes(q);
+        (o.client  || '').toLowerCase().includes(q) ||
+        (o.address || '').toLowerCase().includes(q) ||
+        (o.phone   || '').includes(q);
 
       return matchFilter && matchSearch;
     });
@@ -594,35 +780,69 @@
     }
 
     list.innerHTML = filtered.map(o => {
-      const st  = statusOf(o);
-      const lbl = daysLabel(o);
-      const icon = o.type === 'WC' ? '🚽' : '⛺';
-      const typeCls = o.type === 'WC' ? 'wc' : 'tent';
+      const st      = statusOf(o);
+      const lbl     = returnLabel(o);
+      const isWC    = o.type === 'WC';
+      const icon    = isWC ? '🚽' : '⛺';
+      const typeCls = isWC ? 'wc' : 'tent';
+
+      // Detail chips (some WC-only, payment chips for all types)
+      const chips = [];
+
+      if (isWC) {
+        const cl = cleaningChip(o);
+        if (cl) chips.push(`<span class="chip ${cl.cls}">${cl.text}</span>`);
+
+        const dur = durationChip(o);
+        if (dur) chips.push(`<span class="chip long-term">📅 ${dur}</span>`);
+      }
+
+      if (o.monthlyPayment) {
+        chips.push(`<span class="chip">${o.paymentMethod === 'bank' ? '🏦' : '💵'} ${o.monthlyPayment}€/muj</span>`);
+      }
+
+      if (Number(o.currentDebt) > 0) {
+        chips.push(`<span class="chip debt">⚠️ Borxh: ${o.currentDebt}€</span>`);
+      }
+
+      if (o.deliveryDate) {
+        chips.push(`<span class="chip">📤 ${formatDate(o.deliveryDate)}</span>`);
+      }
+
+      const detailsHtml = chips.length
+        ? `<div class="card-wc-details">${chips.join('')}</div>`
+        : '';
 
       return `
         <div class="order-card ${st}" data-id="${o.id}">
-          <div class="type-badge ${typeCls}">${icon}</div>
-          <div class="order-info">
-            <div class="client">${escHtml(o.client)}</div>
-            <div class="address">📍 ${escHtml(o.address)}</div>
+          <div class="card-main-row">
+            <div class="type-badge ${typeCls}">${icon}</div>
+            <div class="order-info">
+              <div class="client">${escHtml(o.client)}</div>
+              <div class="sub">
+                <span>📍 ${escHtml(o.address)}</span>
+                ${o.phone ? `<span>📞 ${escHtml(o.phone)}</span>` : ''}
+              </div>
+            </div>
+            <div class="order-meta">
+              <div class="date">↩ ${formatDate(o.returnDate)}</div>
+              <span class="days-tag ${lbl.cls}">${lbl.text}</span>
+            </div>
+            <div class="order-actions">
+              ${!o.returned
+                ? `<button class="action-btn" title="Shëno si kthyer" onclick="markReturned('${o.id}')">✅</button>`
+                : `<button class="action-btn" title="Shëno si aktive" onclick="markActive('${o.id}')">↩️</button>`}
+              <button class="action-btn" title="Ndrysho" onclick="openEdit('${o.id}')">✏️</button>
+              <button class="action-btn delete" title="Fshi" onclick="deleteOrder('${o.id}')">🗑️</button>
+            </div>
           </div>
-          <div class="order-meta">
-            <div class="date">↩ ${formatDate(o.returnDate)}</div>
-            <span class="days-tag ${lbl.cls}">${lbl.text}</span>
-          </div>
-          <div class="order-actions">
-            ${!o.returned
-              ? `<button class="action-btn" title="Shëno si kthyer" onclick="markReturned('${o.id}')">✅</button>`
-              : `<button class="action-btn" title="Shëno si aktive" onclick="markActive('${o.id}')">↩️</button>`}
-            <button class="action-btn" title="Ndrysho" onclick="openEdit('${o.id}')">✏️</button>
-            <button class="action-btn delete" title="Fshi" onclick="deleteOrder('${o.id}')">🗑️</button>
-          </div>
+          ${detailsHtml}
         </div>`;
     }).join('');
   }
 
   function escHtml(s) {
-    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
   // ── CRUD ─────────────────────────────────────────────────────────────────
@@ -647,20 +867,35 @@
   // ── Modal ─────────────────────────────────────────────────────────────────
   let editingId = null;
 
+  function syncWcSection() {
+    const type = document.querySelector('input[name="type"]:checked').value;
+    document.getElementById('wc-section').classList.toggle('hidden', type !== 'WC');
+  }
+
   function openModal(order) {
     editingId = order ? order.id : null;
     document.getElementById('modal-title').textContent = order ? 'Ndrysho Porosinë' : 'Porosi e Re';
-    document.getElementById('f-client').value  = order ? order.client  : '';
-    document.getElementById('f-address').value = order ? order.address : '';
-    document.getElementById('f-date').value    = order ? order.returnDate : '';
+
+    document.getElementById('f-client').value   = order?.client       || '';
+    document.getElementById('f-address').value  = order?.address      || '';
+    document.getElementById('f-phone').value    = order?.phone        || '';
+    document.getElementById('f-delivery').value = order?.deliveryDate || todayStr();
+    document.getElementById('f-date').value     = order?.returnDate   || '';
+    document.getElementById('f-cleaning').value = order?.cleaningFreq || '';
+    document.getElementById('f-monthly').value  = order?.monthlyPayment || '';
+    document.getElementById('f-payment').value  = order?.paymentMethod  || 'cash';
+    document.getElementById('f-debt').value     = order?.currentDebt    || '';
+
     document.querySelectorAll('input[name="type"]').forEach(r => {
       r.checked = r.value === (order ? order.type : 'WC');
     });
+
     if (!order) {
-      // default: tomorrow
       const tom = new Date(); tom.setDate(tom.getDate() + 1);
       document.getElementById('f-date').value = tom.toISOString().slice(0,10);
     }
+
+    syncWcSection();
     document.getElementById('overlay').classList.add('open');
     document.getElementById('f-client').focus();
   }
@@ -676,27 +911,42 @@
   }
 
   function saveOrder() {
-    const client  = document.getElementById('f-client').value.trim();
-    const address = document.getElementById('f-address').value.trim();
-    const type    = document.querySelector('input[name="type"]:checked').value;
-    const date    = document.getElementById('f-date').value;
+    const client   = document.getElementById('f-client').value.trim();
+    const address  = document.getElementById('f-address').value.trim();
+    const phone    = document.getElementById('f-phone').value.trim();
+    const type     = document.querySelector('input[name="type"]:checked').value;
+    const delivery = document.getElementById('f-delivery').value;
+    const date     = document.getElementById('f-date').value;
 
-    if (!client)  { alert('Ju lutem shkruani emrin e klientit.'); return; }
-    if (!address) { alert('Ju lutem shkruani adresën e shërbimit.'); return; }
-    if (!date)    { alert('Ju lutem zgjidhni datën e kthimit.'); return; }
+    if (!client)   { alert('Ju lutem shkruani emrin dhe mbiemrin.'); return; }
+    if (!address)  { alert('Ju lutem shkruani lokacionin.'); return; }
+    if (!delivery) { alert('Ju lutem zgjidhni datën e dërgimit.'); return; }
+    if (!date)     { alert('Ju lutem zgjidhni datën e kthimit.'); return; }
+
+    const paymentData = {
+      monthlyPayment: Number(document.getElementById('f-monthly').value) || 0,
+      paymentMethod:  document.getElementById('f-payment').value,
+      currentDebt:    Number(document.getElementById('f-debt').value) || 0,
+    };
+    const wcData = type === 'WC' ? {
+      cleaningFreq: document.getElementById('f-cleaning').value || null,
+    } : {};
 
     const orders = loadOrders();
 
     if (editingId) {
       const o = orders.find(x => x.id === editingId);
-      if (o) { o.client = client; o.address = address; o.type = type; o.returnDate = date; }
+      if (o) Object.assign(o, { client, address, phone, type, deliveryDate: delivery, returnDate: date, ...paymentData, ...wcData });
     } else {
       orders.push({
         id: crypto.randomUUID(),
-        client, address, type,
-        returnDate: date,
-        returned: false,
-        createdAt: new Date().toISOString()
+        client, address, phone, type,
+        deliveryDate: delivery,
+        returnDate:   date,
+        returned:     false,
+        createdAt:    new Date().toISOString(),
+        ...paymentData,
+        ...wcData
       });
     }
 
@@ -709,8 +959,13 @@
   document.getElementById('btn-add').addEventListener('click', () => openModal(null));
   document.getElementById('btn-cancel').addEventListener('click', closeModal);
   document.getElementById('btn-save').addEventListener('click', saveOrder);
+
   document.getElementById('overlay').addEventListener('click', e => {
     if (e.target === document.getElementById('overlay')) closeModal();
+  });
+
+  document.querySelectorAll('input[name="type"]').forEach(r => {
+    r.addEventListener('change', syncWcSection);
   });
 
   document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -727,7 +982,6 @@
     render();
   });
 
-  // keyboard shortcut: Escape closes modal
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') closeModal();
     if (e.key === 'Enter' && document.getElementById('overlay').classList.contains('open')) saveOrder();
