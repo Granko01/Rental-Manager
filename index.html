@@ -409,6 +409,35 @@
 
     #wc-section.hidden { display: none; }
 
+    /* Day-of-week picker */
+    .day-picker {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .day-picker input { display: none; }
+
+    .day-label {
+      display: inline-block;
+      padding: 6px 11px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--muted);
+      background: var(--card);
+      transition: all 0.12s;
+      user-select: none;
+    }
+
+    .day-picker input:checked + .day-label {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
     .section-label {
       font-size: 0.78rem;
       font-weight: 700;
@@ -594,13 +623,16 @@
       <div class="section-label">🚽 Detaje Tualeti</div>
 
       <div class="field">
-        <label>Pastrimi i Tualetit</label>
-        <select id="f-cleaning">
-          <option value="">— Pa reminder —</option>
-          <option value="1w">Çdo 1 javë</option>
-          <option value="2w">Çdo 2 javë</option>
-          <option value="1m">Çdo 1 muaj</option>
-        </select>
+        <label>Ditët e Pastrimit</label>
+        <div class="day-picker">
+          <input type="checkbox" id="cd-1" name="cleanDay" value="1" /><label class="day-label" for="cd-1">E Hënë</label>
+          <input type="checkbox" id="cd-2" name="cleanDay" value="2" /><label class="day-label" for="cd-2">E Martë</label>
+          <input type="checkbox" id="cd-3" name="cleanDay" value="3" /><label class="day-label" for="cd-3">E Mërkurë</label>
+          <input type="checkbox" id="cd-4" name="cleanDay" value="4" /><label class="day-label" for="cd-4">E Enjte</label>
+          <input type="checkbox" id="cd-5" name="cleanDay" value="5" /><label class="day-label" for="cd-5">E Premte</label>
+          <input type="checkbox" id="cd-6" name="cleanDay" value="6" /><label class="day-label" for="cd-6">E Shtunë</label>
+          <input type="checkbox" id="cd-0" name="cleanDay" value="0" /><label class="day-label" for="cd-0">E Diel</label>
+        </div>
       </div>
     </div>
 
@@ -659,37 +691,42 @@
   }
 
   // ── Cleaning logic ────────────────────────────────────────────────────────
-  const FREQ_DAYS = { '1w': 7, '2w': 14, '1m': 30 };
+  const DAY_NAMES = ['E Diel', 'E Hënë', 'E Martë', 'E Mërkurë', 'E Enjte', 'E Premte', 'E Shtunë'];
 
-  function nextCleaningDate(order) {
-    if (order.type !== 'WC' || !order.cleaningFreq || !order.deliveryDate) return null;
-    const freq = FREQ_DAYS[order.cleaningFreq];
-    if (!freq) return null;
+  function getCleaningDays(order) {
+    if (order.type !== 'WC') return [];
+    // new day-of-week array
+    if (Array.isArray(order.cleaningDays) && order.cleaningDays.length) {
+      return order.cleaningDays.map(Number);
+    }
+    return [];
+  }
 
-    const delivery = new Date(order.deliveryDate + 'T00:00:00');
-    const today    = new Date(); today.setHours(0,0,0,0);
-    const daysSince = Math.floor((today - delivery) / 86400000);
-
-    const cycles = daysSince < 0 ? 0 : Math.floor(daysSince / freq);
-    const next = new Date(delivery);
-    next.setDate(next.getDate() + (cycles + 1) * freq);
-    return next.toISOString().slice(0, 10);
+  function daysUntilNextCleaningDay(days) {
+    if (!days.length) return null;
+    const todayDow = new Date().getDay();
+    for (let i = 0; i <= 6; i++) {
+      if (days.includes((todayDow + i) % 7)) return i;
+    }
+    return null;
   }
 
   function cleaningChip(order) {
-    const next = nextCleaningDate(order);
-    if (!next) return null;
-    const d = daysUntil(next);
-    if (d < 0)  return { text: `🧹 Pastrim ${Math.abs(d)}d vonuar`, cls: 'clean-overdue' };
+    const days = getCleaningDays(order);
+    if (!days.length) return null;
+    const d = daysUntilNextCleaningDay(days);
+    if (d === null) return null;
     if (d === 0) return { text: '🧹 Pastrim Sot!',  cls: 'clean-soon' };
     if (d === 1) return { text: '🧹 Pastrim Nesër', cls: 'clean-soon' };
-    return { text: `🧹 Pastrim ${d}d`, cls: 'clean-ok' };
+    const nextDow = (new Date().getDay() + d) % 7;
+    return { text: `🧹 ${DAY_NAMES[nextDow]}`, cls: 'clean-ok' };
   }
 
   function needsCleaningNow(order) {
     if (order.returned) return false;
-    const next = nextCleaningDate(order);
-    return !!next && daysUntil(next) <= 0;
+    const days = getCleaningDays(order);
+    if (!days.length) return false;
+    return days.includes(new Date().getDay());
   }
 
   // ── Duration ──────────────────────────────────────────────────────────────
@@ -845,22 +882,101 @@
     return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
+  // ── Notifications ────────────────────────────────────────────────────────
+  function LN() { return window.Capacitor?.Plugins?.LocalNotifications; }
+
+  function notifId(str) {
+    let h = 5381;
+    for (let i = 0; i < str.length; i++) h = ((h << 5) + h) ^ str.charCodeAt(i);
+    return (h >>> 0) % 2000000000;
+  }
+
+  function nextWeekdayAt8(dayJs) {
+    const now = new Date();
+    let diff = (dayJs - now.getDay() + 7) % 7;
+    if (diff === 0 && now.getHours() >= 8) diff = 7;
+    const d = new Date();
+    d.setDate(d.getDate() + diff);
+    d.setHours(8, 0, 0, 0);
+    return d;
+  }
+
+  async function cancelOrderNotifs(order) {
+    if (!LN() || !order?._notifIds?.length) return;
+    try { await LN().cancel({ notifications: order._notifIds.map(id => ({ id })) }); } catch (_) {}
+  }
+
+  async function scheduleCleaningNotifs(order) {
+    if (!LN() || !order.cleaningDays?.length || order.returned) return;
+    await cancelOrderNotifs(order);
+
+    const notifications = [];
+    const ids = [];
+
+    for (const dayJs of order.cleaningDays) {
+      const beforeDayJs = (dayJs - 1 + 7) % 7;
+      const idOn     = notifId(order.id + '_on_'     + dayJs);
+      const idBefore = notifId(order.id + '_before_' + dayJs);
+      ids.push(idOn, idBefore);
+
+      notifications.push({
+        id: idOn,
+        title: '🧹 Pastrim Sot',
+        body: `${order.client} · ${order.address}`,
+        schedule: { at: nextWeekdayAt8(dayJs),     every: 'week', allowWhileIdle: true },
+      });
+      notifications.push({
+        id: idBefore,
+        title: '🧹 Pastrim Nesër',
+        body: `${order.client} · ${order.address}`,
+        schedule: { at: nextWeekdayAt8(beforeDayJs), every: 'week', allowWhileIdle: true },
+      });
+    }
+
+    const orders = loadOrders();
+    const o = orders.find(x => x.id === order.id);
+    if (o) { o._notifIds = ids; saveOrders(orders); }
+
+    try { await LN().schedule({ notifications }); } catch (e) { console.warn('Notif error', e); }
+  }
+
+  async function requestNotifPermission() {
+    if (!LN()) return;
+    try {
+      const p = await LN().checkPermissions();
+      if (p.display !== 'granted') await LN().requestPermissions();
+    } catch (_) {}
+  }
+
   // ── CRUD ─────────────────────────────────────────────────────────────────
-  function markReturned(id) {
+  async function markReturned(id) {
     const orders = loadOrders();
     const o = orders.find(x => x.id === id);
-    if (o) { o.returned = true; saveOrders(orders); render(); }
+    if (o) {
+      o.returned = true;
+      await cancelOrderNotifs(o);
+      saveOrders(orders);
+      render();
+    }
   }
 
-  function markActive(id) {
+  async function markActive(id) {
     const orders = loadOrders();
     const o = orders.find(x => x.id === id);
-    if (o) { o.returned = false; saveOrders(orders); render(); }
+    if (o) {
+      o.returned = false;
+      saveOrders(orders);
+      await scheduleCleaningNotifs(o);
+      render();
+    }
   }
 
-  function deleteOrder(id) {
+  async function deleteOrder(id) {
     if (!confirm('Fshi këtë porosi?')) return;
-    saveOrders(loadOrders().filter(o => o.id !== id));
+    const orders = loadOrders();
+    const o = orders.find(x => x.id === id);
+    if (o) await cancelOrderNotifs(o);
+    saveOrders(orders.filter(x => x.id !== id));
     render();
   }
 
@@ -881,10 +997,14 @@
     document.getElementById('f-phone').value    = order?.phone        || '';
     document.getElementById('f-delivery').value = order?.deliveryDate || todayStr();
     document.getElementById('f-date').value     = order?.returnDate   || '';
-    document.getElementById('f-cleaning').value = order?.cleaningFreq || '';
     document.getElementById('f-monthly').value  = order?.monthlyPayment || '';
     document.getElementById('f-payment').value  = order?.paymentMethod  || 'cash';
     document.getElementById('f-debt').value     = order?.currentDebt    || '';
+
+    const savedDays = Array.isArray(order?.cleaningDays) ? order.cleaningDays.map(Number) : [];
+    document.querySelectorAll('input[name="cleanDay"]').forEach(cb => {
+      cb.checked = savedDays.includes(Number(cb.value));
+    });
 
     document.querySelectorAll('input[name="type"]').forEach(r => {
       r.checked = r.value === (order ? order.type : 'WC');
@@ -928,17 +1048,21 @@
       paymentMethod:  document.getElementById('f-payment').value,
       currentDebt:    Number(document.getElementById('f-debt').value) || 0,
     };
+    const selectedDays = type === 'WC'
+      ? Array.from(document.querySelectorAll('input[name="cleanDay"]:checked')).map(cb => Number(cb.value))
+      : [];
     const wcData = type === 'WC' ? {
-      cleaningFreq: document.getElementById('f-cleaning').value || null,
+      cleaningDays: selectedDays,
     } : {};
 
     const orders = loadOrders();
+    let savedOrder;
 
     if (editingId) {
       const o = orders.find(x => x.id === editingId);
-      if (o) Object.assign(o, { client, address, phone, type, deliveryDate: delivery, returnDate: date, ...paymentData, ...wcData });
+      if (o) { Object.assign(o, { client, address, phone, type, deliveryDate: delivery, returnDate: date, ...paymentData, ...wcData }); savedOrder = o; }
     } else {
-      orders.push({
+      savedOrder = {
         id: crypto.randomUUID(),
         client, address, phone, type,
         deliveryDate: delivery,
@@ -947,12 +1071,14 @@
         createdAt:    new Date().toISOString(),
         ...paymentData,
         ...wcData
-      });
+      };
+      orders.push(savedOrder);
     }
 
     saveOrders(orders);
     closeModal();
     render();
+    if (savedOrder) scheduleCleaningNotifs(savedOrder);
   }
 
   // ── Event listeners ───────────────────────────────────────────────────────
@@ -989,6 +1115,7 @@
 
   // ── Init ─────────────────────────────────────────────────────────────────
   render();
+  requestNotifPermission();
 </script>
 </body>
 </html>
