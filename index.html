@@ -846,6 +846,10 @@
         chips.push(`<span class="chip">📤 ${formatDate(o.deliveryDate)}</span>`);
       }
 
+      if (o.returnDate) {
+        chips.push(`<span class="chip days-tag ${lbl.cls}">↩ ${formatDate(o.returnDate)} · ${lbl.text}</span>`);
+      }
+
       const detailsHtml = chips.length
         ? `<div class="card-wc-details">${chips.join('')}</div>`
         : '';
