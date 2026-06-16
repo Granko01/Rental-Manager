@@ -487,6 +487,73 @@
       .card-wc-details { padding-left: 0; }
       .field-row { grid-template-columns: 1fr; }
     }
+
+    /* ── Login screen ── */
+    .login-screen {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 300;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
+    .login-screen.hidden { display: none; }
+
+    .login-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px 28px 28px;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+    }
+
+    .login-logo { font-size: 2.8rem; text-align: center; margin-bottom: 10px; }
+    .login-card h2 { text-align: center; font-size: 1.3rem; font-weight: 700; margin-bottom: 4px; }
+    .login-sub { text-align: center; color: var(--muted); font-size: 0.83rem; margin-bottom: 26px; }
+    .remember-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: var(--muted);
+      user-select: none;
+    }
+
+    .remember-row input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .login-error {
+      color: var(--danger);
+      font-size: 0.82rem;
+      margin-top: 10px;
+      min-height: 18px;
+      text-align: center;
+    }
+
+    /* logout button in header */
+    #btn-logout {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+    #btn-logout:hover { background: #fef2f2; border-color: #fca5a5; color: var(--danger); }
   </style>
 </head>
 <body>
@@ -494,7 +561,10 @@
 <!-- ── Header ── -->
 <header>
   <h1><span>Rental</span>-Manager</h1>
-  <button id="btn-add">+ Shto Porosi</button>
+  <div style="display:flex;gap:8px;align-items:center">
+    <button id="btn-logout">Dil 🚪</button>
+    <button id="btn-add">+ Shto Porosi</button>
+  </div>
 </header>
 
 <!-- ── Main ── -->
@@ -549,6 +619,29 @@
   <div id="orders-list"></div>
 
 </main>
+
+<!-- ── Login Screen ── -->
+<div id="login-screen" class="login-screen">
+  <div class="login-card">
+    <div class="login-logo">🏠</div>
+    <h2>Rental Manager</h2>
+    <p class="login-sub">Hyr në llogari për të vazhduar</p>
+    <div class="field">
+      <label>Përdoruesi</label>
+      <input id="l-user" type="text" placeholder="Emri i përdoruesit" autocomplete="username" />
+    </div>
+    <div class="field">
+      <label>Fjalëkalimi</label>
+      <input id="l-pass" type="password" placeholder="••••••••" autocomplete="current-password" />
+    </div>
+    <label class="remember-row">
+      <input type="checkbox" id="l-remember" checked />
+      <span>Më mbaj mend</span>
+    </label>
+    <div id="login-error" class="login-error"></div>
+    <button id="btn-login" class="btn-save" style="width:100%;margin-top:14px;padding:13px">Hyr →</button>
+  </div>
+</div>
 
 <!-- ── Add / Edit Modal ── -->
 <div class="overlay" id="overlay">
@@ -1117,9 +1210,93 @@
     if (e.key === 'Enter' && document.getElementById('overlay').classList.contains('open')) saveOrder();
   });
 
+  // ── Auth ─────────────────────────────────────────────────────────────────
+  const AUTH_USER = 'manager';
+  const AUTH_SALT = '82d073f9cfc08ad9196fb6670bfeed3a1144e5cc0f0040386f11f8a5be46af84';
+  const AUTH_HASH = 'b5325af467343b20811c6260df9cdeb8f347b3856bfb900374ecf440d96f03ac'; // PBKDF2-SHA256, 200k rounds
+
+  function hexToBytes(hex) {
+    const b = new Uint8Array(hex.length / 2);
+    for (let i = 0; i < b.length; i++) b[i] = parseInt(hex.substr(i * 2, 2), 16);
+    return b;
+  }
+
+  async function pbkdf2Hash(password) {
+    const key = await crypto.subtle.importKey(
+      'raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits']
+    );
+    const bits = await crypto.subtle.deriveBits(
+      { name: 'PBKDF2', salt: hexToBytes(AUTH_SALT), iterations: 200000, hash: 'SHA-256' },
+      key, 256
+    );
+    return Array.from(new Uint8Array(bits)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  function isLoggedIn() {
+    return localStorage.getItem('authed') === '1' || sessionStorage.getItem('authed') === '1';
+  }
+
+  function showApp() {
+    document.getElementById('login-screen').classList.add('hidden');
+  }
+
+  function showLogin() {
+    document.getElementById('login-screen').classList.remove('hidden');
+    document.getElementById('l-user').value = '';
+    document.getElementById('l-pass').value = '';
+    document.getElementById('login-error').textContent = '';
+  }
+
+  async function doLogin() {
+    const user = document.getElementById('l-user').value.trim();
+    const pass = document.getElementById('l-pass').value;
+    const err  = document.getElementById('login-error');
+    const btn  = document.getElementById('btn-login');
+
+    if (!user || !pass) { err.textContent = 'Plotëso të gjitha fushat.'; return; }
+
+    btn.disabled = true;
+    btn.textContent = 'Duke u verifikuar…';
+
+    const hash = await pbkdf2Hash(pass);
+    btn.disabled = false;
+    btn.textContent = 'Hyr →';
+
+    if (user.toLowerCase() === AUTH_USER.toLowerCase() && hash === AUTH_HASH) {
+      const remember = document.getElementById('l-remember').checked;
+      if (remember) localStorage.setItem('authed', '1');
+      else          sessionStorage.setItem('authed', '1');
+      showApp();
+      render();
+      requestNotifPermission();
+    } else {
+      err.textContent = 'Emri ose fjalëkalimi është i gabuar.';
+      document.getElementById('l-pass').value = '';
+      document.getElementById('l-pass').focus();
+    }
+  }
+
+  function doLogout() {
+    localStorage.removeItem('authed');
+    sessionStorage.removeItem('authed');
+    showLogin();
+  }
+
+  document.getElementById('btn-login').addEventListener('click', doLogin);
+  document.getElementById('btn-logout').addEventListener('click', doLogout);
+  document.getElementById('l-pass').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
+  document.getElementById('l-user').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('l-pass').focus();
+  });
+
   // ── Init ─────────────────────────────────────────────────────────────────
-  render();
-  requestNotifPermission();
+  if (isLoggedIn()) {
+    showApp();
+    render();
+    requestNotifPermission();
+  }
 </script>
 </body>
 </html>
