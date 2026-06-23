@@ -554,6 +554,39 @@
       color: #fff;
     }
 
+    /* Cleaning frequency selector */
+    .freq-selector {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .freq-option {
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.12s;
+      user-select: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .freq-option input { display: none; }
+
+    .freq-option:has(input:checked) {
+      border-color: var(--primary);
+      background: #eff6ff;
+      color: var(--primary);
+    }
+
+    #custom-days-wrap { margin-top: 10px; }
+    #custom-days-wrap.hidden { display: none; }
+
+    #day-picker-wrap.hidden { display: none; }
+
     .section-label {
       font-size: 0.78rem;
       font-weight: 700;
@@ -832,15 +865,46 @@
       <div class="section-label">🚽 Detaje Tualeti</div>
 
       <div class="field">
-        <label>Ditët e Pastrimit</label>
-        <div class="day-picker">
-          <input type="checkbox" id="cd-1" name="cleanDay" value="1" /><label class="day-label" for="cd-1">E Hënë</label>
-          <input type="checkbox" id="cd-2" name="cleanDay" value="2" /><label class="day-label" for="cd-2">E Martë</label>
-          <input type="checkbox" id="cd-3" name="cleanDay" value="3" /><label class="day-label" for="cd-3">E Mërkurë</label>
-          <input type="checkbox" id="cd-4" name="cleanDay" value="4" /><label class="day-label" for="cd-4">E Enjte</label>
-          <input type="checkbox" id="cd-5" name="cleanDay" value="5" /><label class="day-label" for="cd-5">E Premte</label>
-          <input type="checkbox" id="cd-6" name="cleanDay" value="6" /><label class="day-label" for="cd-6">E Shtunë</label>
-          <input type="checkbox" id="cd-0" name="cleanDay" value="0" /><label class="day-label" for="cd-0">E Diel</label>
+        <label>Frekuenca e Pastrimit</label>
+        <div class="freq-selector">
+          <label class="freq-option">
+            <input type="radio" name="cleanFreq" value="weekly" checked />
+            🧹 Çdo Javë
+          </label>
+          <label class="freq-option">
+            <input type="radio" name="cleanFreq" value="biweekly" />
+            🧹 Çdo 2 Javë
+          </label>
+          <label class="freq-option">
+            <input type="radio" name="cleanFreq" value="monthly" />
+            🧹 Çdo Muaj
+          </label>
+          <label class="freq-option">
+            <input type="radio" name="cleanFreq" value="custom" />
+            ⚙️ Custom
+          </label>
+        </div>
+      </div>
+
+      <div id="day-picker-wrap">
+        <div class="field">
+          <label>Ditët e Pastrimit</label>
+          <div class="day-picker">
+            <input type="checkbox" id="cd-1" name="cleanDay" value="1" /><label class="day-label" for="cd-1">E Hënë</label>
+            <input type="checkbox" id="cd-2" name="cleanDay" value="2" /><label class="day-label" for="cd-2">E Martë</label>
+            <input type="checkbox" id="cd-3" name="cleanDay" value="3" /><label class="day-label" for="cd-3">E Mërkurë</label>
+            <input type="checkbox" id="cd-4" name="cleanDay" value="4" /><label class="day-label" for="cd-4">E Enjte</label>
+            <input type="checkbox" id="cd-5" name="cleanDay" value="5" /><label class="day-label" for="cd-5">E Premte</label>
+            <input type="checkbox" id="cd-6" name="cleanDay" value="6" /><label class="day-label" for="cd-6">E Shtunë</label>
+            <input type="checkbox" id="cd-0" name="cleanDay" value="0" /><label class="day-label" for="cd-0">E Diel</label>
+          </div>
+        </div>
+      </div>
+
+      <div id="custom-days-wrap" class="hidden">
+        <div class="field">
+          <label>Çdo sa ditë?</label>
+          <input id="f-custom-days" type="number" min="1" max="365" placeholder="p.sh. 10" />
         </div>
       </div>
     </div>
@@ -908,41 +972,111 @@
 
   // ── Cleaning logic ────────────────────────────────────────────────────────
   const DAY_NAMES = ['E Diel', 'E Hënë', 'E Martë', 'E Mërkurë', 'E Enjte', 'E Premte', 'E Shtunë'];
+  const FREQ_LABELS = { weekly: 'Çdo Javë', biweekly: 'Çdo 2 Javë', monthly: 'Çdo Muaj', custom: 'Custom' };
 
   function getCleaningDays(order) {
     if (order.type !== 'WC') return [];
-    // new day-of-week array
     if (Array.isArray(order.cleaningDays) && order.cleaningDays.length) {
       return order.cleaningDays.map(Number);
     }
     return [];
   }
 
-  function daysUntilNextCleaningDay(days) {
-    if (!days.length) return null;
-    const todayDow = new Date().getDay();
-    for (let i = 0; i <= 6; i++) {
-      if (days.includes((todayDow + i) % 7)) return i;
+  function getNextCleaningDate(order) {
+    if (order.type !== 'WC') return null;
+    const freq = order.cleaningFrequency || 'weekly';
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+
+    if (freq === 'custom') {
+      const intervalDays = Number(order.cleaningCustomDays) || 7;
+      const anchor = order.deliveryDate ? new Date(order.deliveryDate + 'T00:00:00') : new Date(order.createdAt || today);
+      anchor.setHours(0, 0, 0, 0);
+      const diffMs = today - anchor;
+      const diffDays = Math.floor(diffMs / 86400000);
+      if (diffDays < 0) return anchor;
+      const cyclesPassed = Math.floor(diffDays / intervalDays);
+      let next = new Date(anchor);
+      next.setDate(next.getDate() + cyclesPassed * intervalDays);
+      if (next < today) next.setDate(next.getDate() + intervalDays);
+      return next;
     }
+
+    const days = getCleaningDays(order);
+    if (!days.length) return null;
+
+    if (freq === 'weekly') {
+      const todayDow = today.getDay();
+      for (let i = 0; i <= 6; i++) {
+        if (days.includes((todayDow + i) % 7)) {
+          const d = new Date(today);
+          d.setDate(d.getDate() + i);
+          return d;
+        }
+      }
+      return null;
+    }
+
+    if (freq === 'biweekly') {
+      const anchor = order.deliveryDate ? new Date(order.deliveryDate + 'T00:00:00') : new Date(order.createdAt || today);
+      anchor.setHours(0, 0, 0, 0);
+      const weeksSinceAnchor = Math.floor((today - anchor) / (7 * 86400000));
+      const isOnWeek = weeksSinceAnchor % 2 === 0;
+      for (let i = 0; i <= 13; i++) {
+        const candidate = new Date(today);
+        candidate.setDate(candidate.getDate() + i);
+        const weekNum = Math.floor((candidate - anchor) / (7 * 86400000));
+        if (weekNum % 2 === 0 && days.includes(candidate.getDay())) return candidate;
+      }
+      return null;
+    }
+
+    if (freq === 'monthly') {
+      for (let m = 0; m <= 1; m++) {
+        const monthStart = new Date(today.getFullYear(), today.getMonth() + m, 1);
+        for (let d = (m === 0 ? today.getDate() : 1); d <= 31; d++) {
+          const candidate = new Date(today.getFullYear(), today.getMonth() + m, d);
+          if (candidate.getMonth() !== (today.getMonth() + m) % 12) break;
+          if (days.includes(candidate.getDay())) return candidate;
+        }
+      }
+      return null;
+    }
+
     return null;
   }
 
+  function daysUntilNextCleaning(order) {
+    const next = getNextCleaningDate(order);
+    if (!next) return null;
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    return Math.round((next - today) / 86400000);
+  }
+
   function cleaningChip(order) {
-    const days = getCleaningDays(order);
-    if (!days.length) return null;
-    const d = daysUntilNextCleaningDay(days);
+    const d = daysUntilNextCleaning(order);
     if (d === null) return null;
-    if (d === 0) return { text: '🧹 Pastrim Sot!',  cls: 'clean-soon' };
-    if (d === 1) return { text: '🧹 Pastrim Nesër', cls: 'clean-soon' };
-    const nextDow = (new Date().getDay() + d) % 7;
-    return { text: `🧹 ${DAY_NAMES[nextDow]}`, cls: 'clean-ok' };
+    const next = getNextCleaningDate(order);
+    const dateStr = formatDate(next.toISOString().slice(0, 10));
+    if (d === 0) return { text: `🧹 Pastrim Sot!`, cls: 'clean-overdue' };
+    if (d === 1) return { text: `🧹 Pastrim Nesër (${dateStr})`, cls: 'clean-soon' };
+    if (d <= 3) return { text: `🧹 Pas ${d} ditësh (${dateStr})`, cls: 'clean-soon' };
+    const nextDow = next.getDay();
+    return { text: `🧹 ${DAY_NAMES[nextDow]} (${dateStr})`, cls: 'clean-ok' };
+  }
+
+  function cleaningFreqChip(order) {
+    if (order.type !== 'WC' || !order.cleaningFrequency) return null;
+    const freq = order.cleaningFrequency;
+    if (freq === 'custom') {
+      return { text: `🔄 Çdo ${order.cleaningCustomDays || '?'} ditë`, cls: '' };
+    }
+    return { text: `🔄 ${FREQ_LABELS[freq]}`, cls: '' };
   }
 
   function needsCleaningNow(order) {
     if (order.returned) return false;
-    const days = getCleaningDays(order);
-    if (!days.length) return false;
-    return days.includes(new Date().getDay());
+    const d = daysUntilNextCleaning(order);
+    return d === 0;
   }
 
   // ── Duration ──────────────────────────────────────────────────────────────
@@ -997,11 +1131,22 @@
       bannerDue.className = 'banner due';
     }
 
+    const cleaningTomorrow = active.filter(o => daysUntilNextCleaning(o) === 1);
+
     const bannerClean = document.getElementById('banner-clean');
-    if (cleaningToday.length) {
+    if (cleaningToday.length || cleaningTomorrow.length) {
       bannerClean.className = 'banner clean show';
-      bannerClean.innerHTML = `🧹 <strong>${cleaningToday.length} tualet me pastrim sot/vonuar:</strong> ` +
-        cleaningToday.map(o => `<strong>${escHtml(o.client)}</strong>`).join(', ');
+      let msg = '';
+      if (cleaningToday.length) {
+        msg += `🧹 <strong>${cleaningToday.length} tualet me pastrim sot:</strong> ` +
+          cleaningToday.map(o => `<strong>${escHtml(o.client)}</strong>`).join(', ');
+      }
+      if (cleaningTomorrow.length) {
+        if (msg) msg += '<br>';
+        msg += `🧹 <strong>${cleaningTomorrow.length} tualet me pastrim nesër:</strong> ` +
+          cleaningTomorrow.map(o => `<strong>${escHtml(o.client)}</strong>`).join(', ');
+      }
+      bannerClean.innerHTML = msg;
     } else {
       bannerClean.className = 'banner clean';
     }
@@ -1043,6 +1188,9 @@
       const chips = [];
 
       if (isWC) {
+        const fq = cleaningFreqChip(o);
+        if (fq) chips.push(`<span class="chip ${fq.cls}">${fq.text}</span>`);
+
         const cl = cleaningChip(o);
         if (cl) chips.push(`<span class="chip ${cl.cls}">${cl.text}</span>`);
 
@@ -1132,45 +1280,52 @@
     return (h >>> 0) % 2000000000;
   }
 
-  function nextWeekdayAt8(dayJs) {
-    const now = new Date();
-    let diff = (dayJs - now.getDay() + 7) % 7;
-    if (diff === 0 && now.getHours() >= 8) diff = 7;
-    const d = new Date();
-    d.setDate(d.getDate() + diff);
-    d.setHours(8, 0, 0, 0);
-    return d;
-  }
-
   async function cancelOrderNotifs(order) {
     if (!LN() || !order?._notifIds?.length) return;
     try { await LN().cancel({ notifications: order._notifIds.map(id => ({ id })) }); } catch (_) {}
   }
 
   async function scheduleCleaningNotifs(order) {
-    if (!LN() || !order.cleaningDays?.length || order.returned) return;
+    if (!LN() || order.returned) return;
+    const freq = order.cleaningFrequency || 'weekly';
+    if (freq === 'custom' && !order.cleaningCustomDays) return;
+    if (freq !== 'custom' && (!order.cleaningDays || !order.cleaningDays.length)) return;
     await cancelOrderNotifs(order);
+
+    const next = getNextCleaningDate(order);
+    if (!next) return;
 
     const notifications = [];
     const ids = [];
 
-    for (const dayJs of order.cleaningDays) {
-      const beforeDayJs = (dayJs - 1 + 7) % 7;
-      const idOn     = notifId(order.id + '_on_'     + dayJs);
-      const idBefore = notifId(order.id + '_before_' + dayJs);
-      ids.push(idOn, idBefore);
+    const idOn = notifId(order.id + '_clean_on');
+    const idBefore = notifId(order.id + '_clean_before');
+    ids.push(idOn, idBefore);
 
+    const onDate = new Date(next);
+    onDate.setHours(8, 0, 0, 0);
+
+    const beforeDate = new Date(next);
+    beforeDate.setDate(beforeDate.getDate() - 1);
+    beforeDate.setHours(8, 0, 0, 0);
+
+    const now = new Date();
+
+    if (onDate > now) {
       notifications.push({
         id: idOn,
-        title: '🧹 Pastrim Sot',
+        title: '🧹 Pastrim Sot!',
         body: `${order.client} · ${order.address}`,
-        schedule: { at: nextWeekdayAt8(dayJs),     every: 'week', allowWhileIdle: true },
+        schedule: { at: onDate, allowWhileIdle: true },
       });
+    }
+
+    if (beforeDate > now) {
       notifications.push({
         id: idBefore,
         title: '🧹 Pastrim Nesër',
         body: `${order.client} · ${order.address}`,
-        schedule: { at: nextWeekdayAt8(beforeDayJs), every: 'week', allowWhileIdle: true },
+        schedule: { at: beforeDate, allowWhileIdle: true },
       });
     }
 
@@ -1178,7 +1333,18 @@
     const o = orders.find(x => x.id === order.id);
     if (o) { o._notifIds = ids; saveOrders(orders); }
 
-    try { await LN().schedule({ notifications }); } catch (e) { console.warn('Notif error', e); }
+    if (notifications.length) {
+      try { await LN().schedule({ notifications }); } catch (e) { console.warn('Notif error', e); }
+    }
+  }
+
+  async function rescheduleAllNotifs() {
+    const orders = loadOrders();
+    for (const o of orders) {
+      if (!o.returned && o.type === 'WC') {
+        await scheduleCleaningNotifs(o);
+      }
+    }
   }
 
   async function requestNotifPermission() {
@@ -1267,6 +1433,13 @@
   function syncWcSection() {
     const type = document.querySelector('input[name="type"]:checked').value;
     document.getElementById('wc-section').classList.toggle('hidden', type !== 'WC');
+    syncCustomDays();
+  }
+
+  function syncCustomDays() {
+    const freq = document.querySelector('input[name="cleanFreq"]:checked')?.value;
+    document.getElementById('custom-days-wrap').classList.toggle('hidden', freq !== 'custom');
+    document.getElementById('day-picker-wrap').classList.toggle('hidden', freq === 'custom');
   }
 
   function openModal(order) {
@@ -1282,10 +1455,17 @@
     document.getElementById('f-payment').value  = order?.paymentMethod  || 'cash';
     document.getElementById('f-debt').value     = order?.currentDebt    || '';
 
+    const savedFreq = order?.cleaningFrequency || 'weekly';
+    document.querySelectorAll('input[name="cleanFreq"]').forEach(r => {
+      r.checked = r.value === savedFreq;
+    });
+    document.getElementById('f-custom-days').value = order?.cleaningCustomDays || '';
+
     const savedDays = Array.isArray(order?.cleaningDays) ? order.cleaningDays.map(Number) : [];
     document.querySelectorAll('input[name="cleanDay"]').forEach(cb => {
       cb.checked = savedDays.includes(Number(cb.value));
     });
+    syncCustomDays();
 
     document.querySelectorAll('input[name="type"]').forEach(r => {
       r.checked = r.value === (order ? order.type : 'WC');
@@ -1342,12 +1522,15 @@
       paymentMethod:  document.getElementById('f-payment').value,
       currentDebt:    Number(document.getElementById('f-debt').value) || 0,
     };
-    const selectedDays = type === 'WC'
-      ? Array.from(document.querySelectorAll('input[name="cleanDay"]:checked')).map(cb => Number(cb.value))
-      : [];
-    const wcData = type === 'WC' ? {
-      cleaningDays: selectedDays,
-    } : {};
+    const wcData = {};
+    if (type === 'WC') {
+      const freq = document.querySelector('input[name="cleanFreq"]:checked')?.value || 'weekly';
+      wcData.cleaningFrequency = freq;
+      wcData.cleaningCustomDays = freq === 'custom' ? (Number(document.getElementById('f-custom-days').value) || 7) : 0;
+      wcData.cleaningDays = freq !== 'custom'
+        ? Array.from(document.querySelectorAll('input[name="cleanDay"]:checked')).map(cb => Number(cb.value))
+        : [];
+    }
 
     const newComment = document.getElementById('f-comment').value.trim();
 
@@ -1400,6 +1583,10 @@
 
   document.querySelectorAll('input[name="type"]').forEach(r => {
     r.addEventListener('change', syncWcSection);
+  });
+
+  document.querySelectorAll('input[name="cleanFreq"]').forEach(r => {
+    r.addEventListener('change', syncCustomDays);
   });
 
   document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -1506,7 +1693,7 @@
   if (isLoggedIn()) {
     showApp();
     render();
-    requestNotifPermission();
+    requestNotifPermission().then(() => rescheduleAllNotifs());
   }
 </script>
 </body>
