@@ -586,6 +586,37 @@
     #custom-days-wrap.hidden { display: none; }
 
     #day-picker-wrap.hidden { display: none; }
+    #month-day-picker-wrap.hidden { display: none; }
+
+    .month-day-picker {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .month-day-picker input { display: none; }
+
+    .month-day-label {
+      display: inline-block;
+      padding: 5px 8px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--muted);
+      background: var(--card);
+      transition: all 0.12s;
+      user-select: none;
+      min-width: 30px;
+      text-align: center;
+    }
+
+    .month-day-picker input:checked + .month-day-label {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
 
     .section-label {
       font-size: 0.78rem;
@@ -855,9 +886,15 @@
       </div>
     </div>
 
-    <div class="field">
-      <label>Borxhi Aktual (€)</label>
-      <input id="f-debt" type="number" min="0" step="1" placeholder="0" />
+    <div class="field-row">
+      <div class="field">
+        <label>Borxhi Aktual (€)</label>
+        <input id="f-debt" type="number" min="0" step="1" placeholder="0" />
+      </div>
+      <div class="field">
+        <label>Borxhi Ditor (€)</label>
+        <input id="f-daily-debt" type="number" min="0" step="0.01" placeholder="0" />
+      </div>
     </div>
 
     <!-- WC-only section -->
@@ -897,6 +934,45 @@
             <input type="checkbox" id="cd-5" name="cleanDay" value="5" /><label class="day-label" for="cd-5">E Premte</label>
             <input type="checkbox" id="cd-6" name="cleanDay" value="6" /><label class="day-label" for="cd-6">E Shtunë</label>
             <input type="checkbox" id="cd-0" name="cleanDay" value="0" /><label class="day-label" for="cd-0">E Diel</label>
+          </div>
+        </div>
+      </div>
+
+      <div id="month-day-picker-wrap" class="hidden">
+        <div class="field">
+          <label>Ditët e Muajit</label>
+          <div class="month-day-picker">
+            <input type="checkbox" id="md-1"  name="cleanDayOfMonth" value="1"  /><label class="month-day-label" for="md-1">1</label>
+            <input type="checkbox" id="md-2"  name="cleanDayOfMonth" value="2"  /><label class="month-day-label" for="md-2">2</label>
+            <input type="checkbox" id="md-3"  name="cleanDayOfMonth" value="3"  /><label class="month-day-label" for="md-3">3</label>
+            <input type="checkbox" id="md-4"  name="cleanDayOfMonth" value="4"  /><label class="month-day-label" for="md-4">4</label>
+            <input type="checkbox" id="md-5"  name="cleanDayOfMonth" value="5"  /><label class="month-day-label" for="md-5">5</label>
+            <input type="checkbox" id="md-6"  name="cleanDayOfMonth" value="6"  /><label class="month-day-label" for="md-6">6</label>
+            <input type="checkbox" id="md-7"  name="cleanDayOfMonth" value="7"  /><label class="month-day-label" for="md-7">7</label>
+            <input type="checkbox" id="md-8"  name="cleanDayOfMonth" value="8"  /><label class="month-day-label" for="md-8">8</label>
+            <input type="checkbox" id="md-9"  name="cleanDayOfMonth" value="9"  /><label class="month-day-label" for="md-9">9</label>
+            <input type="checkbox" id="md-10" name="cleanDayOfMonth" value="10" /><label class="month-day-label" for="md-10">10</label>
+            <input type="checkbox" id="md-11" name="cleanDayOfMonth" value="11" /><label class="month-day-label" for="md-11">11</label>
+            <input type="checkbox" id="md-12" name="cleanDayOfMonth" value="12" /><label class="month-day-label" for="md-12">12</label>
+            <input type="checkbox" id="md-13" name="cleanDayOfMonth" value="13" /><label class="month-day-label" for="md-13">13</label>
+            <input type="checkbox" id="md-14" name="cleanDayOfMonth" value="14" /><label class="month-day-label" for="md-14">14</label>
+            <input type="checkbox" id="md-15" name="cleanDayOfMonth" value="15" /><label class="month-day-label" for="md-15">15</label>
+            <input type="checkbox" id="md-16" name="cleanDayOfMonth" value="16" /><label class="month-day-label" for="md-16">16</label>
+            <input type="checkbox" id="md-17" name="cleanDayOfMonth" value="17" /><label class="month-day-label" for="md-17">17</label>
+            <input type="checkbox" id="md-18" name="cleanDayOfMonth" value="18" /><label class="month-day-label" for="md-18">18</label>
+            <input type="checkbox" id="md-19" name="cleanDayOfMonth" value="19" /><label class="month-day-label" for="md-19">19</label>
+            <input type="checkbox" id="md-20" name="cleanDayOfMonth" value="20" /><label class="month-day-label" for="md-20">20</label>
+            <input type="checkbox" id="md-21" name="cleanDayOfMonth" value="21" /><label class="month-day-label" for="md-21">21</label>
+            <input type="checkbox" id="md-22" name="cleanDayOfMonth" value="22" /><label class="month-day-label" for="md-22">22</label>
+            <input type="checkbox" id="md-23" name="cleanDayOfMonth" value="23" /><label class="month-day-label" for="md-23">23</label>
+            <input type="checkbox" id="md-24" name="cleanDayOfMonth" value="24" /><label class="month-day-label" for="md-24">24</label>
+            <input type="checkbox" id="md-25" name="cleanDayOfMonth" value="25" /><label class="month-day-label" for="md-25">25</label>
+            <input type="checkbox" id="md-26" name="cleanDayOfMonth" value="26" /><label class="month-day-label" for="md-26">26</label>
+            <input type="checkbox" id="md-27" name="cleanDayOfMonth" value="27" /><label class="month-day-label" for="md-27">27</label>
+            <input type="checkbox" id="md-28" name="cleanDayOfMonth" value="28" /><label class="month-day-label" for="md-28">28</label>
+            <input type="checkbox" id="md-29" name="cleanDayOfMonth" value="29" /><label class="month-day-label" for="md-29">29</label>
+            <input type="checkbox" id="md-30" name="cleanDayOfMonth" value="30" /><label class="month-day-label" for="md-30">30</label>
+            <input type="checkbox" id="md-31" name="cleanDayOfMonth" value="31" /><label class="month-day-label" for="md-31">31</label>
           </div>
         </div>
       </div>
@@ -1031,15 +1107,18 @@
     }
 
     if (freq === 'monthly') {
-      for (let m = 0; m <= 1; m++) {
-        const monthStart = new Date(today.getFullYear(), today.getMonth() + m, 1);
-        for (let d = (m === 0 ? today.getDate() : 1); d <= 31; d++) {
-          const candidate = new Date(today.getFullYear(), today.getMonth() + m, d);
-          if (candidate.getMonth() !== (today.getMonth() + m) % 12) break;
-          if (days.includes(candidate.getDay())) return candidate;
+      const datesOfMonth = (order.cleaningDaysOfMonth || []).map(Number).sort((a, b) => a - b);
+      if (!datesOfMonth.length) return null;
+      const todayDate = today.getDate();
+      // try current month
+      for (const d of datesOfMonth) {
+        if (d >= todayDate) {
+          const candidate = new Date(today.getFullYear(), today.getMonth(), d);
+          if (candidate.getMonth() === today.getMonth()) return candidate;
         }
       }
-      return null;
+      // next month — first selected date
+      return new Date(today.getFullYear(), today.getMonth() + 1, datesOfMonth[0]);
     }
 
     return null;
@@ -1069,6 +1148,10 @@
     const freq = order.cleaningFrequency;
     if (freq === 'custom') {
       return { text: `🔄 Çdo ${order.cleaningCustomDays || '?'} ditë`, cls: '' };
+    }
+    if (freq === 'monthly' && Array.isArray(order.cleaningDaysOfMonth) && order.cleaningDaysOfMonth.length) {
+      const dates = [...order.cleaningDaysOfMonth].sort((a, b) => a - b).join(', ');
+      return { text: `🔄 Çdo Muaj (${dates})`, cls: '' };
     }
     return { text: `🔄 ${FREQ_LABELS[freq]}`, cls: '' };
   }
@@ -1204,6 +1287,10 @@
 
       if (Number(o.currentDebt) > 0) {
         chips.push(`<span class="chip debt">⚠️ Borxh: ${o.currentDebt}€</span>`);
+      }
+
+      if (Number(o.dailyDebt) > 0) {
+        chips.push(`<span class="chip debt">📅 Borxh Ditor: ${o.dailyDebt}€</span>`);
       }
 
       if (o.deliveryDate) {
@@ -1439,7 +1526,8 @@
   function syncCustomDays() {
     const freq = document.querySelector('input[name="cleanFreq"]:checked')?.value;
     document.getElementById('custom-days-wrap').classList.toggle('hidden', freq !== 'custom');
-    document.getElementById('day-picker-wrap').classList.toggle('hidden', freq === 'custom');
+    document.getElementById('day-picker-wrap').classList.toggle('hidden', freq === 'custom' || freq === 'monthly');
+    document.getElementById('month-day-picker-wrap').classList.toggle('hidden', freq !== 'monthly');
   }
 
   function openModal(order) {
@@ -1453,7 +1541,8 @@
     document.getElementById('f-date').value     = order?.returnDate   || '';
     document.getElementById('f-monthly').value  = order?.monthlyPayment || '';
     document.getElementById('f-payment').value  = order?.paymentMethod  || 'cash';
-    document.getElementById('f-debt').value     = order?.currentDebt    || '';
+    document.getElementById('f-debt').value       = order?.currentDebt || '';
+    document.getElementById('f-daily-debt').value = order?.dailyDebt  || '';
 
     const savedFreq = order?.cleaningFrequency || 'weekly';
     document.querySelectorAll('input[name="cleanFreq"]').forEach(r => {
@@ -1465,6 +1554,12 @@
     document.querySelectorAll('input[name="cleanDay"]').forEach(cb => {
       cb.checked = savedDays.includes(Number(cb.value));
     });
+
+    const savedDaysOfMonth = Array.isArray(order?.cleaningDaysOfMonth) ? order.cleaningDaysOfMonth.map(Number) : [];
+    document.querySelectorAll('input[name="cleanDayOfMonth"]').forEach(cb => {
+      cb.checked = savedDaysOfMonth.includes(Number(cb.value));
+    });
+
     syncCustomDays();
 
     document.querySelectorAll('input[name="type"]').forEach(r => {
@@ -1521,14 +1616,18 @@
       monthlyPayment: Number(document.getElementById('f-monthly').value) || 0,
       paymentMethod:  document.getElementById('f-payment').value,
       currentDebt:    Number(document.getElementById('f-debt').value) || 0,
+      dailyDebt:      Number(document.getElementById('f-daily-debt').value) || 0,
     };
     const wcData = {};
     if (type === 'WC') {
       const freq = document.querySelector('input[name="cleanFreq"]:checked')?.value || 'weekly';
       wcData.cleaningFrequency = freq;
       wcData.cleaningCustomDays = freq === 'custom' ? (Number(document.getElementById('f-custom-days').value) || 7) : 0;
-      wcData.cleaningDays = freq !== 'custom'
+      wcData.cleaningDays = (freq === 'weekly' || freq === 'biweekly')
         ? Array.from(document.querySelectorAll('input[name="cleanDay"]:checked')).map(cb => Number(cb.value))
+        : [];
+      wcData.cleaningDaysOfMonth = freq === 'monthly'
+        ? Array.from(document.querySelectorAll('input[name="cleanDayOfMonth"]:checked')).map(cb => Number(cb.value))
         : [];
     }
 
