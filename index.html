@@ -588,35 +588,74 @@
     #day-picker-wrap.hidden { display: none; }
     #month-day-picker-wrap.hidden { display: none; }
 
-    .month-day-picker {
-      display: flex;
-      gap: 5px;
-      flex-wrap: wrap;
-    }
-
-    .month-day-picker input { display: none; }
-
-    .month-day-label {
-      display: inline-block;
-      padding: 5px 8px;
+    .month-calendar {
       border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 0.76rem;
-      font-weight: 600;
-      cursor: pointer;
-      color: var(--muted);
-      background: var(--card);
-      transition: all 0.12s;
-      user-select: none;
-      min-width: 30px;
-      text-align: center;
+      border-radius: var(--radius);
+      overflow: hidden;
     }
 
-    .month-day-picker input:checked + .month-day-label {
+    .month-calendar-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 14px;
       background: var(--primary);
-      border-color: var(--primary);
       color: #fff;
     }
+
+    .month-calendar-nav button {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.15rem;
+      cursor: pointer;
+      padding: 2px 8px;
+      border-radius: 4px;
+      line-height: 1;
+    }
+
+    .month-calendar-nav button:hover { background: rgba(255,255,255,0.2); }
+    .month-calendar-nav span { font-weight: 700; font-size: 0.88rem; }
+
+    .month-calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 3px;
+      padding: 8px;
+      background: var(--bg);
+    }
+
+    .cal-day-header {
+      text-align: center;
+      font-size: 0.66rem;
+      font-weight: 700;
+      color: var(--muted);
+      padding: 3px 2px 5px;
+      text-transform: uppercase;
+    }
+
+    .cal-day-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text);
+      background: var(--card);
+      transition: all 0.12s;
+      padding: 8px 2px;
+      user-select: none;
+    }
+
+    .cal-day-cell:hover { background: #eff6ff; }
+    .cal-day-cell.selected { background: var(--primary); color: #fff; }
+    .cal-day-cell.faded { color: #cbd5e1; }
+    .cal-day-cell.faded:hover { background: #f8fafc; }
+    .cal-day-cell.empty { background: transparent; pointer-events: none; }
+    .cal-day-cell.disabled { color: #d1d5db; pointer-events: none; background: var(--card); }
+    .cal-day-cell.disabled:hover { background: var(--card); }
 
     .section-label {
       font-size: 0.78rem;
@@ -941,38 +980,46 @@
       <div id="month-day-picker-wrap" class="hidden">
         <div class="field">
           <label>Ditët e Muajit</label>
-          <div class="month-day-picker">
-            <input type="checkbox" id="md-1"  name="cleanDayOfMonth" value="1"  /><label class="month-day-label" for="md-1">1</label>
-            <input type="checkbox" id="md-2"  name="cleanDayOfMonth" value="2"  /><label class="month-day-label" for="md-2">2</label>
-            <input type="checkbox" id="md-3"  name="cleanDayOfMonth" value="3"  /><label class="month-day-label" for="md-3">3</label>
-            <input type="checkbox" id="md-4"  name="cleanDayOfMonth" value="4"  /><label class="month-day-label" for="md-4">4</label>
-            <input type="checkbox" id="md-5"  name="cleanDayOfMonth" value="5"  /><label class="month-day-label" for="md-5">5</label>
-            <input type="checkbox" id="md-6"  name="cleanDayOfMonth" value="6"  /><label class="month-day-label" for="md-6">6</label>
-            <input type="checkbox" id="md-7"  name="cleanDayOfMonth" value="7"  /><label class="month-day-label" for="md-7">7</label>
-            <input type="checkbox" id="md-8"  name="cleanDayOfMonth" value="8"  /><label class="month-day-label" for="md-8">8</label>
-            <input type="checkbox" id="md-9"  name="cleanDayOfMonth" value="9"  /><label class="month-day-label" for="md-9">9</label>
-            <input type="checkbox" id="md-10" name="cleanDayOfMonth" value="10" /><label class="month-day-label" for="md-10">10</label>
-            <input type="checkbox" id="md-11" name="cleanDayOfMonth" value="11" /><label class="month-day-label" for="md-11">11</label>
-            <input type="checkbox" id="md-12" name="cleanDayOfMonth" value="12" /><label class="month-day-label" for="md-12">12</label>
-            <input type="checkbox" id="md-13" name="cleanDayOfMonth" value="13" /><label class="month-day-label" for="md-13">13</label>
-            <input type="checkbox" id="md-14" name="cleanDayOfMonth" value="14" /><label class="month-day-label" for="md-14">14</label>
-            <input type="checkbox" id="md-15" name="cleanDayOfMonth" value="15" /><label class="month-day-label" for="md-15">15</label>
-            <input type="checkbox" id="md-16" name="cleanDayOfMonth" value="16" /><label class="month-day-label" for="md-16">16</label>
-            <input type="checkbox" id="md-17" name="cleanDayOfMonth" value="17" /><label class="month-day-label" for="md-17">17</label>
-            <input type="checkbox" id="md-18" name="cleanDayOfMonth" value="18" /><label class="month-day-label" for="md-18">18</label>
-            <input type="checkbox" id="md-19" name="cleanDayOfMonth" value="19" /><label class="month-day-label" for="md-19">19</label>
-            <input type="checkbox" id="md-20" name="cleanDayOfMonth" value="20" /><label class="month-day-label" for="md-20">20</label>
-            <input type="checkbox" id="md-21" name="cleanDayOfMonth" value="21" /><label class="month-day-label" for="md-21">21</label>
-            <input type="checkbox" id="md-22" name="cleanDayOfMonth" value="22" /><label class="month-day-label" for="md-22">22</label>
-            <input type="checkbox" id="md-23" name="cleanDayOfMonth" value="23" /><label class="month-day-label" for="md-23">23</label>
-            <input type="checkbox" id="md-24" name="cleanDayOfMonth" value="24" /><label class="month-day-label" for="md-24">24</label>
-            <input type="checkbox" id="md-25" name="cleanDayOfMonth" value="25" /><label class="month-day-label" for="md-25">25</label>
-            <input type="checkbox" id="md-26" name="cleanDayOfMonth" value="26" /><label class="month-day-label" for="md-26">26</label>
-            <input type="checkbox" id="md-27" name="cleanDayOfMonth" value="27" /><label class="month-day-label" for="md-27">27</label>
-            <input type="checkbox" id="md-28" name="cleanDayOfMonth" value="28" /><label class="month-day-label" for="md-28">28</label>
-            <input type="checkbox" id="md-29" name="cleanDayOfMonth" value="29" /><label class="month-day-label" for="md-29">29</label>
-            <input type="checkbox" id="md-30" name="cleanDayOfMonth" value="30" /><label class="month-day-label" for="md-30">30</label>
-            <input type="checkbox" id="md-31" name="cleanDayOfMonth" value="31" /><label class="month-day-label" for="md-31">31</label>
+          <div style="display:none">
+            <input type="checkbox" id="md-1"  name="cleanDayOfMonth" value="1"  />
+            <input type="checkbox" id="md-2"  name="cleanDayOfMonth" value="2"  />
+            <input type="checkbox" id="md-3"  name="cleanDayOfMonth" value="3"  />
+            <input type="checkbox" id="md-4"  name="cleanDayOfMonth" value="4"  />
+            <input type="checkbox" id="md-5"  name="cleanDayOfMonth" value="5"  />
+            <input type="checkbox" id="md-6"  name="cleanDayOfMonth" value="6"  />
+            <input type="checkbox" id="md-7"  name="cleanDayOfMonth" value="7"  />
+            <input type="checkbox" id="md-8"  name="cleanDayOfMonth" value="8"  />
+            <input type="checkbox" id="md-9"  name="cleanDayOfMonth" value="9"  />
+            <input type="checkbox" id="md-10" name="cleanDayOfMonth" value="10" />
+            <input type="checkbox" id="md-11" name="cleanDayOfMonth" value="11" />
+            <input type="checkbox" id="md-12" name="cleanDayOfMonth" value="12" />
+            <input type="checkbox" id="md-13" name="cleanDayOfMonth" value="13" />
+            <input type="checkbox" id="md-14" name="cleanDayOfMonth" value="14" />
+            <input type="checkbox" id="md-15" name="cleanDayOfMonth" value="15" />
+            <input type="checkbox" id="md-16" name="cleanDayOfMonth" value="16" />
+            <input type="checkbox" id="md-17" name="cleanDayOfMonth" value="17" />
+            <input type="checkbox" id="md-18" name="cleanDayOfMonth" value="18" />
+            <input type="checkbox" id="md-19" name="cleanDayOfMonth" value="19" />
+            <input type="checkbox" id="md-20" name="cleanDayOfMonth" value="20" />
+            <input type="checkbox" id="md-21" name="cleanDayOfMonth" value="21" />
+            <input type="checkbox" id="md-22" name="cleanDayOfMonth" value="22" />
+            <input type="checkbox" id="md-23" name="cleanDayOfMonth" value="23" />
+            <input type="checkbox" id="md-24" name="cleanDayOfMonth" value="24" />
+            <input type="checkbox" id="md-25" name="cleanDayOfMonth" value="25" />
+            <input type="checkbox" id="md-26" name="cleanDayOfMonth" value="26" />
+            <input type="checkbox" id="md-27" name="cleanDayOfMonth" value="27" />
+            <input type="checkbox" id="md-28" name="cleanDayOfMonth" value="28" />
+            <input type="checkbox" id="md-29" name="cleanDayOfMonth" value="29" />
+            <input type="checkbox" id="md-30" name="cleanDayOfMonth" value="30" />
+            <input type="checkbox" id="md-31" name="cleanDayOfMonth" value="31" />
+          </div>
+          <div class="month-calendar">
+            <div class="month-calendar-nav">
+              <button type="button" onclick="calNavigate(-1)">‹</button>
+              <span id="cal-month-label"></span>
+              <button type="button" onclick="calNavigate(1)">›</button>
+            </div>
+            <div class="month-calendar-grid" id="cal-grid"></div>
           </div>
         </div>
       </div>
@@ -1514,6 +1561,94 @@
     render();
   }
 
+  // ── Month Calendar ────────────────────────────────────────────────────────
+  const MONTH_NAMES_SQ = ['Janar','Shkurt','Mars','Prill','Maj','Qershor',
+                           'Korrik','Gusht','Shtator','Tetor','Nëntor','Dhjetor'];
+  let calYear  = new Date().getFullYear();
+  let calMonth = new Date().getMonth();
+
+  function renderMonthCalendar() {
+    const grid  = document.getElementById('cal-grid');
+    const label = document.getElementById('cal-month-label');
+    if (!grid || !label) return;
+
+    label.textContent = `${MONTH_NAMES_SQ[calMonth]} ${calYear}`;
+
+    const checkedDays = new Set(
+      Array.from(document.querySelectorAll('input[name="cleanDayOfMonth"]:checked'))
+           .map(cb => Number(cb.value))
+    );
+
+    // Date constraints
+    const today = new Date();
+    const todayYear  = today.getFullYear();
+    const todayMonth = today.getMonth();
+    const todayDate  = today.getDate();
+
+    const deliveryVal = document.getElementById('f-delivery')?.value;
+    let delYear = null, delMonth = null, delDay = null;
+    if (deliveryVal) {
+      const p = deliveryVal.split('-').map(Number);
+      delYear = p[0]; delMonth = p[1] - 1; delDay = p[2];
+    }
+
+    const returnVal = document.getElementById('f-date')?.value;
+    let retYear = null, retMonth = null, retDay = null;
+    if (returnVal) {
+      const p = returnVal.split('-').map(Number);
+      retYear = p[0]; retMonth = p[1] - 1; retDay = p[2];
+    }
+
+    // Whole-month disabled checks
+    const isBeforeToday    = calYear < todayYear || (calYear === todayYear && calMonth < todayMonth);
+    const isBeforeDelivery = delYear !== null && (calYear < delYear || (calYear === delYear && calMonth < delMonth));
+    const isAfterReturn    = retYear !== null && (calYear > retYear || (calYear === retYear && calMonth > retMonth));
+    const wholeMonthOff    = isBeforeToday || isBeforeDelivery || isAfterReturn;
+
+    const firstDow    = new Date(calYear, calMonth, 1).getDay();
+    const startOffset = (firstDow + 6) % 7; // Mon=0
+    const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+
+    const headers = ['H','Ma','Më','En','Pr','Sh','D'];
+    let html = headers.map(h => `<div class="cal-day-header">${h}</div>`).join('');
+
+    for (let i = 0; i < startOffset; i++) {
+      html += `<div class="cal-day-cell empty"></div>`;
+    }
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      let disabled = wholeMonthOff;
+
+      if (!disabled) {
+        // Current month: days before today
+        if (calYear === todayYear && calMonth === todayMonth && d < todayDate) disabled = true;
+        // Delivery month: days on or before delivery day (WC just arrived, clean from next day)
+        if (delYear !== null && calYear === delYear && calMonth === delMonth && d <= delDay) disabled = true;
+        // Return month: days after return day (WC already gone)
+        if (retYear !== null && calYear === retYear && calMonth === retMonth && d > retDay) disabled = true;
+      }
+
+      const selected = !disabled && checkedDays.has(d);
+      const cls = ['cal-day-cell', selected ? 'selected' : '', disabled ? 'disabled' : ''].filter(Boolean).join(' ');
+      const click = disabled ? '' : `onclick="toggleCalDay(${d})"`;
+      html += `<div class="${cls}" ${click}>${d}</div>`;
+    }
+
+    grid.innerHTML = html;
+  }
+
+  function toggleCalDay(d) {
+    const cb = document.getElementById(`md-${d}`);
+    if (cb) { cb.checked = !cb.checked; renderMonthCalendar(); }
+  }
+
+  function calNavigate(dir) {
+    calMonth += dir;
+    if (calMonth > 11) { calMonth = 0; calYear++; }
+    if (calMonth < 0)  { calMonth = 11; calYear--; }
+    renderMonthCalendar();
+  }
+
   // ── Modal ─────────────────────────────────────────────────────────────────
   let editingId = null;
 
@@ -1527,7 +1662,9 @@
     const freq = document.querySelector('input[name="cleanFreq"]:checked')?.value;
     document.getElementById('custom-days-wrap').classList.toggle('hidden', freq !== 'custom');
     document.getElementById('day-picker-wrap').classList.toggle('hidden', freq === 'custom' || freq === 'monthly');
-    document.getElementById('month-day-picker-wrap').classList.toggle('hidden', freq !== 'monthly');
+    const showMonthly = freq === 'monthly';
+    document.getElementById('month-day-picker-wrap').classList.toggle('hidden', !showMonthly);
+    if (showMonthly) renderMonthCalendar();
   }
 
   function openModal(order) {
@@ -1582,6 +1719,16 @@
     if (!order) {
       const tom = new Date(); tom.setDate(tom.getDate() + 1);
       document.getElementById('f-date').value = tom.toISOString().slice(0,10);
+    }
+
+    // Init calendar to delivery month (or current month)
+    const calInitVal = document.getElementById('f-delivery').value;
+    if (calInitVal) {
+      const p = calInitVal.split('-').map(Number);
+      calYear = p[0]; calMonth = p[1] - 1;
+    } else {
+      calYear = new Date().getFullYear();
+      calMonth = new Date().getMonth();
     }
 
     syncWcSection();
@@ -1686,6 +1833,15 @@
 
   document.querySelectorAll('input[name="cleanFreq"]').forEach(r => {
     r.addEventListener('change', syncCustomDays);
+  });
+
+  // Re-render calendar when delivery/return dates change
+  ['f-delivery', 'f-date'].forEach(id => {
+    document.getElementById(id).addEventListener('change', () => {
+      if (!document.getElementById('month-day-picker-wrap').classList.contains('hidden')) {
+        renderMonthCalendar();
+      }
+    });
   });
 
   document.querySelectorAll('.filter-btn').forEach(btn => {
